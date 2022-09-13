@@ -21,6 +21,5 @@ function App() {
     </div>
   );
 }
-//sdjkalda
 
 export default App;
