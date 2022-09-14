@@ -1,0 +1,2 @@
+.ToDoItem .checked { text-decoration: line-through;}
+.ToDoItem .plain {text-decoration: null;}
