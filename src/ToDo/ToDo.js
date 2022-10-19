@@ -3,8 +3,8 @@ import ToDoItem from "./ToDoItem";
 import "./ToDo.css";
 
 export default class ToDo extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       displayedTodos: [],
       todos: [],
@@ -16,8 +16,7 @@ export default class ToDo extends React.Component {
 
   handleClickAdd() {
     const oldTodos = this.state.todos;
-    const item = { todoItem: this.state.newItem };
-    item.strike = false;
+    const item = { todoItem: this.state.newItem, strike: false };
     oldTodos.push(item);
     this.setState({ ...this.state, todos: oldTodos });
     this.todoItems.push({ todoItem: this.state.newItem, checked: false });
@@ -25,26 +24,23 @@ export default class ToDo extends React.Component {
 
   strikeItem(index) {
     const tempTodos = this.state.todos;
-    const item = tempTodos[index];
-    item.strike = true;
-    this.todoItems[index].checked = true;
-    this.setState({ ...this.state, displayedTodos: this.todoItems });
+    tempTodos[index].strike = true;
+    this.setState({ ...this.state, todos: tempTodos });
   }
 
   handleClickFilter() {
-    const tempDones = this.state.todos.filter((item) => item.strike);
-    const tempTodos = this.state.todos.filter((item) => !item.strike);
-    this.setState({ ...this.state, dones: tempDones, todos: tempTodos });
+    const oldTodos = this.state.todos;
+    const filterOldTodos = oldTodos.filter((item) => item.strike);
+    if (filterOldTodos.length > 0) {
+      console.log(this.state);
+      this.setState({
+        ...this.state,
+        dones: filterOldTodos,
+        todos: oldTodos.filter((item) => !item.strike),
+      });
+    }
   }
 
-  handleClickOnlyTodos() {
-    this.setState({
-      displayedTodos: this.todoItems.filter((item) => item.strike),
-    });
-  }
-  handleClickShowAll() {
-    this.setState({ displayedTodos: this.todoItems });
-  }
   inputNewItem(e) {
     const input = e.target.value;
     this.setState({ ...this.state, newItem: input });
@@ -59,8 +55,6 @@ export default class ToDo extends React.Component {
         />
         <button onClick={() => this.handleClickAdd()}>Add</button>
         <p></p>
-        <button onClick={() => this.handleClickOnlyTodos()}>Only Todos</button>
-        <button onClick={() => this.handleClickShowAll()}>Show all</button>
         <button onClick={() => this.handleClickFilter()}>Filter</button>
         <h3>Aufgaben</h3>
         {this.state.todos.map((item, index) => (
@@ -68,48 +62,16 @@ export default class ToDo extends React.Component {
             text={item.todoItem}
             checked={item.strike}
             striked={() => this.strikeItem(index)}
+            key={index}
           />
         ))}
         <h3>Erledigte Aufgaben</h3>
-        {this.state.dones.map((item) => (
-          <p>{item.todoItem}</p>
-        ))}
-
-        <h3>Todos</h3>
-        {this.state.displayedTodos.map((item, index) => (
-          <ToDoItem
-            text={item.todoItem}
-            checked={item.strike}
-            striked={() => this.strikeItem(index)}
-          />
+        {this.state.dones.map((item, i) => (
+          <p className="checked" key={i}>
+            {item.todoItem}
+          </p>
         ))}
       </div>
     );
   }
 }
-/*} else {
-      return (
-        <div>
-          <input
-            onChange={e => this.inputNewItem(e)}
-            value={this.state.newItem}
-          />
-          <button onClick={() => this.handleClickAdd()}>Add</button>
-          <p></p>
-          <button onClick={() => this.handleClickOnlyTodos()}>
-            Only Todos
-          </button>
-          <button onClick={() => this.handleClickShowAll()}>Show all</button>
-          <button>Filter</button>
-          <h3>Aufgaben</h3>
-          {this.state.todos.map((item, index) => (
-            <ToDoItem
-              text={item.todo}
-              onDelete={() => this.handleClickDone(index)}
-            />
-          ))}
-          <h3>Erledigte Aufgaben</h3>
-        </div>
-      );
-    }
-  }*/
